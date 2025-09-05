@@ -3,89 +3,97 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 
-// ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍÀÇ ÀÌµ¿°ú Á¡ÇÁ¸¦ Á¦¾îÇÏ´Â ½ºÅ©¸³Æ®ÀÔ´Ï´Ù.
-// Rigidbody ±â¹İÀÇ ¹°¸® °è»êÀ» »ç¿ëÇÏ¸ç, ÀÏ°üµÈ ´ÜÀÏ Á¡ÇÁ ·ÎÁ÷À» °¡Áı´Ï´Ù.
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
-    #region ÀÎ½ºÆåÅÍ º¯¼ö
+    #region ì¸ìŠ¤í™í„° ë³€ìˆ˜
 
     [Header("MOVEMENT SETTINGS")]
-    [Tooltip("Ä³¸¯ÅÍÀÇ ÃÖ´ë ÀÌµ¿ ¼ÓµµÀÔ´Ï´Ù.")]
+    [Tooltip("ìºë¦­í„°ì˜ ìµœëŒ€ ì´ë™ ì†ë„ì…ë‹ˆë‹¤.")]
     [SerializeField] private float _moveSpeed = 7f;
-    [Tooltip("ÃÖ´ë ¼Óµµ¿¡ µµ´ŞÇÏ±â±îÁöÀÇ °¡¼ÓµµÀÔ´Ï´Ù. ³ôÀ»¼ö·Ï ºü¸£°Ô ÃÖ´ë ¼Óµµ¿¡ µµ´ŞÇÕ´Ï´Ù.")]
+    [Tooltip("ìµœëŒ€ ì†ë„ì— ë„ë‹¬í•˜ê¸°ê¹Œì§€ì˜ ê°€ì†ë„ì…ë‹ˆë‹¤. ë†’ì„ìˆ˜ë¡ ë¹ ë¥´ê²Œ ìµœëŒ€ ì†ë„ì— ë„ë‹¬í•©ë‹ˆë‹¤.")]
     [SerializeField] private float _acceleration = 80f;
-    [Tooltip("ÀÔ·ÂÀÌ ¾øÀ» ¶§ Á¤ÁöÇÏ±â±îÁöÀÇ °¨¼ÓµµÀÔ´Ï´Ù. ³ôÀ»¼ö·Ï ºü¸£°Ô ¸ØÃä´Ï´Ù.")]
+    [Tooltip("ì…ë ¥ì´ ì—†ì„ ë•Œ ì •ì§€í•˜ê¸°ê¹Œì§€ì˜ ê°ì†ë„ì…ë‹ˆë‹¤. ë†’ì„ìˆ˜ë¡ ë¹ ë¥´ê²Œ ë©ˆì¶¥ë‹ˆë‹¤.")]
     [SerializeField] private float _deceleration = 120f;
-    [Tooltip("Ä³¸¯ÅÍ°¡ ÀÌµ¿ ¹æÇâÀ¸·Î È¸ÀüÇÏ´Â ¼ÓµµÀÔ´Ï´Ù.")]
+    [Tooltip("ìºë¦­í„°ê°€ ì´ë™ ë°©í–¥ìœ¼ë¡œ íšŒì „í•˜ëŠ” ì†ë„ì…ë‹ˆë‹¤.")]
     [SerializeField] private float _rotationSpeed = 1080f;
 
     [Header("DASH SETTINGS")]
-    [Tooltip("´ë½Ã ½Ã Ä³¸¯ÅÍ°¡ ¾ÕÀ¸·Î Æ¢¾î³ª°¡´Â ¼ÓµµÀÔ´Ï´Ù.")]
-    [SerializeField] private float _dashSpeed = 16f;
-    [Tooltip("´ë½Ã Äğ´Ù¿î(ÃÊ)ÀÔ´Ï´Ù.")]
-    [SerializeField] private float _dashCooldown = 0.15f;
+    [Tooltip("ëŒ€ì‹œ ì‹œ ìˆœê°„ì ìœ¼ë¡œ ìœ ì§€í•  í‰ë©´ ì†ë„(m/s).")]
+    [SerializeField] private float _dashSpeed = 14f;
+    [Tooltip("ëŒ€ì‹œê°€ ìœ ì§€ë˜ëŠ” ì‹œê°„(ì´ˆ).")]
+    [SerializeField] private float _dashDuration = 0.15f;
+    [Tooltip("ëŒ€ì‹œ í›„ ë‹¤ì‹œ ì‚¬ìš©í•  ë•Œê¹Œì§€ì˜ ì¿¨ë‹¤ìš´(ì´ˆ).")]
+    [SerializeField] private float _dashCooldown = 0.30f;
 
     #endregion
 
-    #region ³»ºÎ »óÅÂ º¯¼ö
+    #region ë‚´ë¶€ ìƒíƒœ ë³€ìˆ˜
 
-    // Rigidbody ÄÄÆ÷³ÍÆ®(ÀÌ ½ºÅ©¸³Æ®°¡ Á¦¾îÇÏ´Â ¹°¸® ¸öÃ¼)
     private Rigidbody _rb;
+    private Vector2 _moveInput;
 
-    // ÀÔ·Â°ª ¹× »óÅÂ
-    private Vector2 _moveInput;            // ÃÖ½Å ÀÌµ¿ ÀÔ·Â°ª (x: ÁÂ/¿ì, y: ¾Õ/µÚ)
+    // Dash
+    private bool _dashRequested = false;      // ì…ë ¥ ì½œë°±/í´ë°±ì—ì„œ trueë¡œ ì…‹
+    private bool _isDashing = false;          // í˜„ì¬ ëŒ€ì‹œ ì¤‘?
+    private float _dashTimer = 0f;            // ë‚¨ì€ ëŒ€ì‹œ ì‹œê°„
+    private float _dashCooldownLeft = 0f;     // ë‚¨ì€ ì¿¨ë‹¤ìš´
 
-    // ´ë½Ã »óÅÂ
-    private bool _dashRequested = false;   // ÀÔ·Â Äİ¹é¿¡¼­ Ç¥½Ã
-    private float _dashCooldownLeft = 0f;  // Äğ´Ù¿î Å¸ÀÌ¸Ó
-
+    // ê¸°íƒ€
     private bool _isCollided = false;
 
     #endregion
 
-    #region À¯´ÏÆ¼ ¶óÀÌÇÁ»çÀÌÅ¬
+    #region ìœ ë‹ˆí‹° ë¼ì´í”„ì‚¬ì´í´
 
-    // Awake: ÄÄÆ÷³ÍÆ® ÃÊ±âÈ­, Rigidbody Á¦¾à ¼³Á¤
     private void Awake()
     {
         _isCollided = false;
         _rb = GetComponent<Rigidbody>();
         _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-        // Enable interpolation so rendered transform stays smooth between physics updates
         _rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
-    // Update: ÀÔ·Â/»óÅÂ Å¸ÀÌ¸Ó ¾÷µ¥ÀÌÆ®
     private void Update()
     {
-        // (Âü°í) ÇöÀç ½ºÅ©¸³Æ®¿¡¼± º°µµ »óÅÂ °»½Å ¾øÀ½
+        // ìŠ¤í˜ì´ìŠ¤ í´ë°±(ì•¡ì…˜ ì„¸íŒ…ì´ ì—†ì–´ë„ ì‘ë™)
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+            _dashRequested = true;
+
+        // íƒ€ì´ë¨¸ ê°±ì‹ 
         if (_dashCooldownLeft > 0f)
             _dashCooldownLeft -= Time.deltaTime;
+
+        if (_isDashing)
+        {
+            _dashTimer -= Time.deltaTime;
+            if (_dashTimer <= 0f)
+                _isDashing = false;
+        }
     }
 
-    // FixedUpdate: ¹°¸® ¿¬»ê Ã³¸®
     private void FixedUpdate()
     {
-        // 1) ´ë½Ã¸¦ ¸ÕÀú Ã³¸®. Àû¿ëµÆ´Ù¸é ÀÌ ÇÁ·¹ÀÓ¿£ ÀÌµ¿ ½ºÅµ
-        if (HandleDash()) return;
+        // 1) ëŒ€ì‹œ ì§„ì…/ìœ ì§€
+        if (TryApplyOrMaintainDash())
+            return;                 // ëŒ€ì‹œ í”„ë ˆì„ì—ëŠ” ì´ë™ì„ ìŠ¤í‚µ(ì†ë„ ë®ì–´ì“°ê¸° ë°©ì§€)
 
-        // 2) ÀÌµ¿ Ã³¸®
+        // 2) ì¼ë°˜ ì´ë™
         HandleMovement();
     }
 
     #endregion
 
-    #region ÀÔ·Â Ã³¸® (PlayerInput¿¡¼­ È£Ãâ)
+    #region ì…ë ¥ ì²˜ë¦¬ (PlayerInputì—ì„œ í˜¸ì¶œ)
 
-    // Move ¾×¼Ç Äİ¹é: ÀÌµ¿ ÀÔ·Â ¾÷µ¥ÀÌÆ®
+    // Move ì•¡ì…˜ ì½œë°±
     public void OnMove(InputAction.CallbackContext context)
     {
         _moveInput = context.ReadValue<Vector2>();
     }
 
-    // Dash ¾×¼Ç Äİ¹é: 'ÀÇµµ'¸¸ Ç¥½Ã (½ÇÁ¦ ¹°¸® Àû¿ëÀº FixedUpdate¿¡¼­)
+    // Dash ì•¡ì…˜ ì½œë°± (ìˆìœ¼ë©´ ì‚¬ìš©, ì—†ìœ¼ë©´ ìŠ¤í˜ì´ìŠ¤ í´ë°±ìœ¼ë¡œ ë™ì‘)
     public void OnDash(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
@@ -94,57 +102,74 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    #region ¹°¸® Ã³¸® (´ë½Ã, ÀÌµ¿)
+    #region ë¬¼ë¦¬ ì²˜ë¦¬
 
     /// <summary>
-    /// ´Ü¹ß ´ë½Ã¸¦ '±× ¹°¸® ÇÁ·¹ÀÓ ÇÑ ¹ø¸¸' Àû¿ëÇÑ´Ù.
-    /// Àû¿ëµÇ¸é true¸¦ ¹İÈ¯(°°Àº ÇÁ·¹ÀÓÀÇ ÀÌµ¿ º¸°£ÀÌ ´ë½Ã ¼Óµµ¸¦ µ¤¾î¾²Áö ¾Êµµ·Ï ÀÌµ¿ ½ºÅµ ½ÅÈ£).
+    /// ëŒ€ì‹œ ìš”ì²­ì´ ìˆìœ¼ë©´ ëŒ€ì‹œë¥¼ ì‹œì‘í•˜ê³ , ëŒ€ì‹œ ì¤‘ì´ë©´ ì†ë„ë¥¼ ìœ ì§€í•œë‹¤.
+    /// trueë¥¼ ë°˜í™˜í•˜ë©´ ì´ FixedUpdate í”„ë ˆì„ì—ì„œëŠ” ì´ë™ì„ ìŠ¤í‚µí•œë‹¤.
     /// </summary>
-    private bool HandleDash()
+    private bool TryApplyOrMaintainDash()
     {
-        if (!_dashRequested) return false;   // ¿äÃ» ¾øÀ¸¸é ÆĞ½º
-        _dashRequested = false;              // ¿äÃ» ¼Ò¸ğ
+        // ëŒ€ì‹œ ì‹œì‘ ì¡°ê±´: ìš”ì²­ + ì¿¨ë‹¤ìš´ ì¢…ë£Œ + í˜„ì¬ ë¹„ëŒ€ì‹œ ìƒíƒœ
+        if (!_isDashing && _dashRequested && _dashCooldownLeft <= 0f)
+        {
+            _dashRequested = false;
+            _isDashing = true;
+            _dashTimer = _dashDuration;
+            _dashCooldownLeft = _dashCooldown;
 
-        if (_dashCooldownLeft > 0f) return false; // Äğ´Ù¿î ÁßÀÌ¸é ÆĞ½º
+            // ë°”ë¼ë³´ëŠ” ë°©í–¥(ìˆ˜í‰)ìœ¼ë¡œ ëŒ€ì‹œ ì†ë„ ì ìš©
+            Vector3 dir = transform.forward; dir.y = 0f;
+            if (dir.sqrMagnitude < 1e-4f) dir = Vector3.forward;
+            dir.Normalize();
 
-        // ¹Ù¶óº¸´Â ¹æÇâÀÇ ¼öÆò ¼ººĞÀ¸·Î ´ë½Ã
-        Vector3 dir = transform.forward;
-        dir.y = 0f;
-        if (dir.sqrMagnitude < 0.0001f) dir = Vector3.forward; // ¾ÈÀüÀåÄ¡
-        dir.Normalize();
+            Vector3 v = _rb.velocity; // í‘œì¤€ Rigidbody ì†ë„ ì‚¬ìš©
+            _rb.velocity = new Vector3(dir.x * _dashSpeed, v.y, dir.z * _dashSpeed);
 
-        Vector3 v = _rb.linearVelocity;
-        _rb.linearVelocity = new Vector3(dir.x * _dashSpeed, v.y, dir.z * _dashSpeed);
+            return true; // ì´ í”„ë ˆì„ì€ ì´ë™ ìŠ¤í‚µ
+        }
 
-        _dashCooldownLeft = _dashCooldown;
-        return true;
+        // ëŒ€ì‹œ ìœ ì§€: ëŒ€ì‹œ ì¤‘ì—ëŠ” ê°™ì€ ë°©í–¥/ì†ë„ë¥¼ ê°•ì œ ìœ ì§€(ì†ë§› ì¼ì •)
+        if (_isDashing)
+        {
+            Vector3 dir = transform.forward; dir.y = 0f;
+            if (dir.sqrMagnitude < 1e-4f) dir = Vector3.forward;
+            dir.Normalize();
+
+            Vector3 v = _rb.velocity;
+            _rb.velocity = new Vector3(dir.x * _dashSpeed, v.y, dir.z * _dashSpeed);
+            return true; // ì´ë™ ìŠ¤í‚µ
+        }
+
+        // ëŒ€ì‹œ ì•„ë‹˜
+        _dashRequested = false; // ì”ì—¬ ìš”ì²­ ì •ë¦¬
+        return false;
     }
 
-    // ÀÌµ¿ Ã³¸®: ¿ùµå ±âÁØ ÀÔ·ÂÀ» »ç¿ëÇÏ¿© ¸ñÇ¥ ¼Óµµ·Î ºÎµå·´°Ô º¸°£
     private void HandleMovement()
     {
         Vector3 moveDirection = new Vector3(_moveInput.x, 0f, _moveInput.y);
 
-        // 1) ¸ñÇ¥ Æò¸é ¼Óµµ
+        // 1) ëª©í‘œ í‰ë©´ ì†ë„
         Vector3 targetVelocity = moveDirection * _moveSpeed;
 
-        // 2) °¡°¨¼Ó ¼±ÅÃ
+        // 2) ê°€ê°ì† ì„ íƒ
         float accel = moveDirection.sqrMagnitude > 0.01f ? _acceleration : _deceleration;
 
-        // 3) ÇöÀç Æò¸é ¼Óµµ
-        Vector3 currentPlanarVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
+        // 3) í˜„ì¬ í‰ë©´ ì†ë„
+        Vector3 currentPlanarVelocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
 
-        // 4) º¸°£µÈ »õ Æò¸é ¼Óµµ
+        // 4) ë³´ê°„ëœ ìƒˆ í‰ë©´ ì†ë„
         Vector3 newPlanarVelocity = Vector3.MoveTowards(
             currentPlanarVelocity,
             targetVelocity,
             accel * Time.fixedDeltaTime
         );
 
-        // 5) ½ÇÁ¦ ¼Óµµ¿¡ ¹İ¿µ (Y´Â º¸Á¸)
-        _rb.linearVelocity = new Vector3(newPlanarVelocity.x, _rb.linearVelocity.y, newPlanarVelocity.z);
+        // 5) ì‹¤ì œ ì†ë„ì— ë°˜ì˜ (Y ë³´ì¡´)
+        _rb.velocity = new Vector3(newPlanarVelocity.x, _rb.velocity.y, newPlanarVelocity.z);
 
-        // 6) ÀÔ·ÂÀÌ ÀÖÀ» ¶§¸¸ ¹Ù¶óº¸´Â ¹æÇâ È¸Àü
+        // 6) ì…ë ¥ì´ ìˆì„ ë•Œë§Œ ë°”ë¼ë³´ëŠ” ë°©í–¥ íšŒì „
         if (moveDirection.sqrMagnitude > 0.01f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
@@ -154,7 +179,7 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    #region °ñ/È÷µç Ã³¸® (±âÁ¸ ±×´ë·Î)
+    #region ê³¨/íˆë“  ì²˜ë¦¬ (ê¸°ì¡´ ìœ ì§€)
 
     private async void OnParticleCollision(GameObject goal)
     {
@@ -164,7 +189,7 @@ public class PlayerController : MonoBehaviour
 
         if (goal.CompareTag("Hidden"))
         {
-            Debug.Log("È÷µç °ñ µµ´Ş");
+            Debug.Log("íˆë“  ê³¨ ë„ë‹¬");
             if (!GameManager.Accomplishment.IsUnlocked((int)AchievementKey.HIDDEN))
             {
                 await GameManager.Accomplishment.UnLock((int)AchievementKey.HIDDEN);
@@ -172,7 +197,6 @@ public class PlayerController : MonoBehaviour
                 if (UnitySceneManager.GetActiveScene().name != Scenes.START)
                 {
                     GameManager.Scene.LoadScene(Scenes.START);
-
                     return;
                 }
             }
@@ -181,7 +205,7 @@ public class PlayerController : MonoBehaviour
         if (goal.CompareTag("Goal"))
         {
             var currentStageName = UnitySceneManager.GetActiveScene().name;
-            Debug.Log($"°ñÀÎ ÁöÁ¡ µµ´Ş {currentStageName}");
+            Debug.Log($"ê³¨ì¸ ì§€ì  ë„ë‹¬ {currentStageName}");
             GameManager.Stage.ClearedStage(currentStageName);
         }
     }

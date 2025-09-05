@@ -19,7 +19,7 @@ public class CloudSystem : MonoBehaviour
     [SerializeField] public float zEnd = 120f;
 
     [Header("Movement")]
-    public float cloudSpeed = 5f; // 공개 속도
+    public float cloudSpeed = 0.5f; // 공개 속도
 
     private Coroutine _spawnLoop;
 
