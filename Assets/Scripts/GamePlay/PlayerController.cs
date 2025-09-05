@@ -21,31 +21,11 @@ public class PlayerController : MonoBehaviour
     [Tooltip("캐릭터가 이동 방향으로 회전하는 속도입니다.")]
     [SerializeField] private float _rotationSpeed = 1080f;
 
-    [Header("JUMP SETTINGS")]
-    [Tooltip("점프 시 가해지는 초기 힘의 크기입니다.")]
-    [SerializeField] private float _jumpForce = 12f;
-    [Tooltip("점프하여 상승하는 동안 적용될 중력 배율입니다. 높을수록 덜 붕 뜹니다.")]
-    [SerializeField] private float _jumpGravityMultiplier = 2.0f;
-    [Tooltip("점프 정점에서 떨어질 때 적용되는 추가 중력 배율입니다. (쫀득한 점프감)")]
-    [SerializeField] private float _fallMultiplier = 3.0f;
-    [Tooltip("공중에서 캐릭터를 좌우로 제어할 수 있는 정도입니다. (0: 제어 불가, 1: 지상과 동일)")]
-    [SerializeField][Range(0f, 1f)] private float _airControlMultiplier = 0.7f;
-
-    [Header("RESPONSIVENESS BUFFERS")]
-    [Tooltip("발판에서 떨어진 직후에도 점프가 가능한 유예 시간입니다.")]
-    [SerializeField] private float _coyoteTime = 0.15f;
-    [Tooltip("착지 직전에 점프를 미리 입력할 수 있는 유예 시간입니다.")]
-    [SerializeField] private float _jumpBufferTime = 0.15f;
-
-    [Header("GROUND DETECTION")]
-    [Tooltip("지면을 감지할 위치를 지정하는 Transform 입니다. (미지정 시 캐릭터 위치 사용)")]
-    [SerializeField] private Transform _groundCheckPoint;
-    [Tooltip("지면 감지 SphereCast의 반지름입니다.")]
-    [SerializeField] private float _groundCheckRadius = 0.2f;
-    [Tooltip("지면 감지 SphereCast의 길이입니다.")]
-    [SerializeField] private float _groundCheckDistance = 0.3f;
-    [Tooltip("지면으로 인식할 레이어를 설정합니다.")]
-    [SerializeField] private LayerMask _groundLayer;
+    [Header("DASH SETTINGS")]
+    [Tooltip("대시 시 캐릭터가 앞으로 튀어나가는 속도입니다.")]
+    [SerializeField] private float _dashSpeed = 16f;
+    [Tooltip("대시 쿨다운(초)입니다.")]
+    [SerializeField] private float _dashCooldown = 0.15f;
 
     #endregion
 
@@ -56,9 +36,10 @@ public class PlayerController : MonoBehaviour
 
     // 입력값 및 상태
     private Vector2 _moveInput;            // 최신 이동 입력값 (x: 좌/우, y: 앞/뒤)
-    private bool _isGrounded;              // 현재 지면에 닿아있는지 여부
-    private float _coyoteTimeCounter;      // 코요테 타이머 카운터
-    private float _jumpBufferCounter;      // 점프 버퍼 타이머 카운터
+
+    // 대시 상태
+    private bool _dashRequested = false;   // 입력 콜백에서 표시
+    private float _dashCooldownLeft = 0f;  // 쿨다운 타이머
 
     private bool _isCollided = false;
 
@@ -79,24 +60,19 @@ public class PlayerController : MonoBehaviour
     // Update: 입력/상태 타이머 업데이트
     private void Update()
     {
-        HandleState();
-        HandleTimers();
+        // (참고) 현재 스크립트에선 별도 상태 갱신 없음
+        if (_dashCooldownLeft > 0f)
+            _dashCooldownLeft -= Time.deltaTime;
     }
 
-    // FixedUpdate: 물리 연산(점프, 이동, 중력) 처리
+    // FixedUpdate: 물리 연산 처리
     private void FixedUpdate()
     {
-        HandleJump();
-        HandleMovement();
-        HandleGravity();
-    }
+        // 1) 대시를 먼저 처리. 적용됐다면 이 프레임엔 이동 스킵
+        if (HandleDash()) return;
 
-    // 에디터에서 값 입력 시 최소값 검증
-    private void OnValidate()
-    {
-        _jumpForce = Mathf.Max(0f, _jumpForce);
-        _jumpGravityMultiplier = Mathf.Max(1f, _jumpGravityMultiplier);
-        _fallMultiplier = Mathf.Max(1f, _fallMultiplier);
+        // 2) 이동 처리
+        HandleMovement();
     }
 
     #endregion
@@ -109,105 +85,76 @@ public class PlayerController : MonoBehaviour
         _moveInput = context.ReadValue<Vector2>();
     }
 
-    // Jump 액션 콜백: performed 시점에 점프 버퍼 활성화
-    public void OnJump(InputAction.CallbackContext context)
+    // Dash 액션 콜백: '의도'만 표시 (실제 물리 적용은 FixedUpdate에서)
+    public void OnDash(InputAction.CallbackContext context)
     {
-        if (context.performed)
-        {
-            _jumpBufferCounter = _jumpBufferTime;
-        }
+        if (!context.performed) return;
+        _dashRequested = true;
     }
 
     #endregion
 
-    #region 상태 판정 및 타이머
+    #region 물리 처리 (대시, 이동)
 
-    // 지면 판정: SphereCast를 사용하여 groundLayer에 해당하는 콜라이더를 감지
-    private void HandleState()
+    /// <summary>
+    /// 단발 대시를 '그 물리 프레임 한 번만' 적용한다.
+    /// 적용되면 true를 반환(같은 프레임의 이동 보간이 대시 속도를 덮어쓰지 않도록 이동 스킵 신호).
+    /// </summary>
+    private bool HandleDash()
     {
-        Transform groundCheckOrigin = _groundCheckPoint != null ? _groundCheckPoint : transform;
-        _isGrounded = Physics.SphereCast(groundCheckOrigin.position, _groundCheckRadius, Vector3.down, out _, _groundCheckDistance, _groundLayer);
-    }
+        if (!_dashRequested) return false;   // 요청 없으면 패스
+        _dashRequested = false;              // 요청 소모
 
-    // 코요테 타이머와 점프 버퍼 카운트 감소 처리
-    private void HandleTimers()
-    {
-        if (_isGrounded)
-        {
-            _coyoteTimeCounter = _coyoteTime;
-        }
-        else
-        {
-            _coyoteTimeCounter -= Time.deltaTime;
-        }
+        if (_dashCooldownLeft > 0f) return false; // 쿨다운 중이면 패스
 
-        if (_jumpBufferCounter > 0)
-        {
-            _jumpBufferCounter -= Time.deltaTime;
-        }
-    }
+        // 바라보는 방향의 수평 성분으로 대시
+        Vector3 dir = transform.forward;
+        dir.y = 0f;
+        if (dir.sqrMagnitude < 0.0001f) dir = Vector3.forward; // 안전장치
+        dir.Normalize();
 
-    #endregion
+        Vector3 v = _rb.linearVelocity;
+        _rb.linearVelocity = new Vector3(dir.x * _dashSpeed, v.y, dir.z * _dashSpeed);
 
-    #region 물리 처리 (점프, 이동, 중력)
-
-    // 점프 실행: 코요테 및 버퍼 조건이 만족할 때 한 번의 점프를 수행
-    private void HandleJump()
-    {
-        if (_coyoteTimeCounter > 0f && _jumpBufferCounter > 0f)
-        {
-            // 수직 속도 초기화 후 즉시 상승 속도 부여
-            _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
-            _rb.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
-            _jumpBufferCounter = 0f;
-        }
+        _dashCooldownLeft = _dashCooldown;
+        return true;
     }
 
     // 이동 처리: 월드 기준 입력을 사용하여 목표 속도로 부드럽게 보간
     private void HandleMovement()
     {
         Vector3 moveDirection = new Vector3(_moveInput.x, 0f, _moveInput.y);
-        float controlMultiplier = _isGrounded ? 1f : _airControlMultiplier;
-        Vector3 targetVelocity = moveDirection * _moveSpeed * controlMultiplier;
 
-        float accel = moveDirection.magnitude > 0.1f ? _acceleration : _deceleration;
-        Vector3 currentPlanarVelocity = new Vector3(_rb.linearVelocity.x, 0, _rb.linearVelocity.z);
+        // 1) 목표 평면 속도
+        Vector3 targetVelocity = moveDirection * _moveSpeed;
 
+        // 2) 가감속 선택
+        float accel = moveDirection.sqrMagnitude > 0.01f ? _acceleration : _deceleration;
+
+        // 3) 현재 평면 속도
+        Vector3 currentPlanarVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
+
+        // 4) 보간된 새 평면 속도
         Vector3 newPlanarVelocity = Vector3.MoveTowards(
             currentPlanarVelocity,
             targetVelocity,
             accel * Time.fixedDeltaTime
         );
 
+        // 5) 실제 속도에 반영 (Y는 보존)
         _rb.linearVelocity = new Vector3(newPlanarVelocity.x, _rb.linearVelocity.y, newPlanarVelocity.z);
 
-        // 이동 중일 때만 캐릭터가 이동 방향을 바라보도록 회전
-        if (moveDirection.magnitude > 0.1f)
+        // 6) 입력이 있을 때만 바라보는 방향 회전
+        if (moveDirection.sqrMagnitude > 0.01f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
             _rb.MoveRotation(Quaternion.RotateTowards(transform.rotation, targetRotation, _rotationSpeed * Time.fixedDeltaTime));
         }
     }
 
-    // 중력 보정: 공중에서만 가속도 기반의 중력 변화 적용
-    private void HandleGravity()
-    {
-        if (!_isGrounded)
-        {
-            float verticalVelocity = _rb.linearVelocity.y;
+    #endregion
 
-            // 하강 시 중력 강화
-            if (verticalVelocity < 0)
-            {
-                _rb.linearVelocity += Vector3.up * Physics.gravity.y * (_fallMultiplier - 1) * Time.fixedDeltaTime;
-            }
-            // 상승 시 추가 중력 적용(부드러운 상승 억제)
-            else if (verticalVelocity > 0)
-            {
-                _rb.linearVelocity += Vector3.up * Physics.gravity.y * (_jumpGravityMultiplier - 1) * Time.fixedDeltaTime;
-            }
-        }
-    }
+    #region 골/히든 처리 (기존 그대로)
 
     private async void OnParticleCollision(GameObject goal)
     {
@@ -237,9 +184,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log($"골인 지점 도달 {currentStageName}");
             GameManager.Stage.ClearedStage(currentStageName);
         }
-        
     }
 
     #endregion
 }
-
