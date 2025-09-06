@@ -5744,7 +5744,7 @@ MonoBehaviour:
   healthSystem: {fileID: 599917961354751538}
   damagePerSecond: 20
   headParticleSystem: {fileID: 2163927534417001176}
-  particleShowSeconds: 0.3
+  particleShowSeconds: 0.45
 --- !u!114 &599917961354751538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5884,7 +5884,19 @@ MonoBehaviour:
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1383412156914200300}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnDash
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 4b9c3e07-05d6-49c5-b758-23af027bc223
     m_ActionName: 'Player/Dash[/Keyboard/space]'
   m_NeverAutoSwitchControlSchemes: 0
@@ -5909,9 +5921,8 @@ MonoBehaviour:
   _deceleration: 30
   _rotationSpeed: 720
   _dashSpeed: 16
+  _dashDuration: 0.15
   _dashCooldown: 0.15
-  _dashTrail: {fileID: 0}
-  _trailDuration: 0.22
 --- !u!1 &8304380219217673216
 GameObject:
   m_ObjectHideFlags: 0

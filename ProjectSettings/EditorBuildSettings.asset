@@ -15,16 +15,22 @@ EditorBuildSettings:
     path: Assets/Scenes/02_TutorialScene.unity
     guid: 3d93027f4773354418c03db2a80c69ac
   - enabled: 1
-    path: Assets/Scenes/04_Step2Scene.unity
-    guid: 4e276243760c4794cbffdeeb86b27079
-  - enabled: 1
     path: Assets/Scenes/03_Step1Scene.unity
+    guid: 839a9cff8431265488b44bf2c56bb744
+  - enabled: 1
+    path: Assets/Scenes/04_Step2Scene.unity
     guid: a0408477db8a6614c8e2b91618a33977
+  - enabled: 1
+    path: Assets/Scenes/05_Step3Scene.unity
+    guid: 972536c52bb71bc4b801dc36a9e3476e
   - enabled: 1
     path: Assets/Scenes/00_LoadingScene.unity
     guid: 215811bd770ff6843ad2b599a21915c8
-  - enabled: 1
-    path: Assets/Scenes/05_FinalStepScene.unity
+  - enabled: 0
+    path: Assets/Scenes/Sample2.unity
+    guid: 4e276243760c4794cbffdeeb86b27079
+  - enabled: 0
+    path: Assets/Scenes/Sample3.unity
     guid: 2dc19f9fc727a4849b0a0c09ae159419
   - enabled: 0
     path: Assets/Scenes/test_hallway.unity
