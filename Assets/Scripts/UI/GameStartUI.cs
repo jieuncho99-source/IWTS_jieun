@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem; // 추가
 
 public class GameStartUI : MonoBehaviour
 {
@@ -20,7 +21,13 @@ public class GameStartUI : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        // 1) 키보드 Space
+        bool spacePressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+
+        // 2) 게임패드 A 버튼 (Xbox 기준 / PS는 Cross 버튼)
+        bool gamepadAPressed = Gamepad.current != null && Gamepad.current.aButton.wasPressedThisFrame;
+
+        if (spacePressed || gamepadAPressed)
         {
             if (achievementPanel.activeSelf)
             {
@@ -32,6 +39,7 @@ public class GameStartUI : MonoBehaviour
             }
         }
 
+        // 깜빡이는 효과
         float t = Mathf.PingPong(Time.time * _speed, 1f);
         float a = Mathf.Lerp(30f / 200f, 1f, t);
 
