@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3493964470019959677
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4174253136262058097}
+  - component: {fileID: 2675628137008480647}
+  - component: {fileID: 557817140356869477}
+  - component: {fileID: 8970589086104218447}
+  m_Layer: 0
+  m_Name: ===GameManager===
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4174253136262058097
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3493964470019959677}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2675628137008480647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3493964470019959677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bf194c4cbeb5f848b23739434d8c455, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stageId: 
+  totalItems: 3
+  collectedItems: 0
+  allStarAchieved: 0
+  onProgressChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onAllStarAchieved:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &557817140356869477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3493964470019959677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5995ac5a266e9a444a8cf6eb8ebd7d59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stageText: {fileID: 0}
+  showTime: 2.5
+  prefix: Stage
+--- !u!114 &8970589086104218447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3493964470019959677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be864d0d96b6b4141b8f9c2bbbf3a36f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slots:
+  - image: {fileID: 0}
+    uncollectedSprite: {fileID: 21300000, guid: 62a08db7f012dfd4cbd7fb98d76a2f33, type: 3}
+    collectedSprite: {fileID: 21300000, guid: 943b11c189ede534caa3ab7650946858, type: 3}
+    preserveAspect: 0
+  - image: {fileID: 0}
+    uncollectedSprite: {fileID: 21300000, guid: 62a08db7f012dfd4cbd7fb98d76a2f33, type: 3}
+    collectedSprite: {fileID: 21300000, guid: 943b11c189ede534caa3ab7650946858, type: 3}
+    preserveAspect: 0
+  - image: {fileID: 0}
+    uncollectedSprite: {fileID: 21300000, guid: 62a08db7f012dfd4cbd7fb98d76a2f33, type: 3}
+    collectedSprite: {fileID: 21300000, guid: 943b11c189ede534caa3ab7650946858, type: 3}
+    preserveAspect: 0
