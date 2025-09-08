@@ -1,3 +1,5 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -29,7 +31,18 @@ public class PlayerController : MonoBehaviour
 
     [Header("DASH FX (선택)")]
     [Tooltip("대시 시작 순간 한 번만 재생할 속도선 파티클")]
-    [SerializeField] public DashSpeedLines dashSpeedLines;      // 자식의 ParticleSystem 연결
+    [SerializeField] public DashSpeedLines dashSpeedLines; // 자식의 ParticleSystem 연결
+
+    [Header("CLEAR RULE")]
+    [Tooltip("이 스테이지에서 아이템 수집을 요구할지 여부(튜토리얼에서는 보통 끔).")]
+    [SerializeField] private bool requireItemsThisStage = true;
+    [Tooltip("튜토리얼 씬 이름. 이름이 일치하면 수집 요구를 자동으로 건너뜁니다.")]
+    [SerializeField] private string tutorialSceneName = Scenes.TUTORIAL;
+
+    [Header("Toast UI")]
+    [SerializeField] private GameObject toastPanel;     // 패널
+    [SerializeField] private TextMeshProUGUI toastText; // 텍스트
+    [SerializeField] private float toastDuration = 2f;  // 몇 초간 보일지
 
     #endregion
 
@@ -133,8 +146,8 @@ public class PlayerController : MonoBehaviour
             Vector3 v = _rb.velocity;
             _rb.velocity = new Vector3(dir.x * _dashSpeed, v.y, dir.z * _dashSpeed);
 
-            // ▶ 대시 시작 시점: FX 재생
-            if (dashSpeedLines != null) dashSpeedLines.OnDashStart();          // 속도선 파티클 1회 재생
+            // 대시 시작 FX
+            if (dashSpeedLines != null) dashSpeedLines.OnDashStart();
 
             return true;
         }
@@ -183,12 +196,22 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    #region 골/히든 처리 (기존 유지)
+    #region 골/히든 처리
+
+    private bool ShouldRequireItems()
+    {
+        if (!requireItemsThisStage) return false;
+
+        string active = UnitySceneManager.GetActiveScene().name;
+        if (!string.IsNullOrEmpty(tutorialSceneName) && active == tutorialSceneName)
+            return false;
+
+        return true;
+    }
 
     private async void OnParticleCollision(GameObject goal)
     {
         if (_isCollided) return;
-
         _isCollided = true;
 
         if (goal.CompareTag("Hidden"))
@@ -208,10 +231,63 @@ public class PlayerController : MonoBehaviour
 
         if (goal.CompareTag("Goal"))
         {
+            // 튜토리얼/조건 비활성 스테이지는 바로 클리어
+            if (!ShouldRequireItems())
+            {
+                var stageName0 = UnitySceneManager.GetActiveScene().name;
+                Debug.Log($"골인 지점 도달 {stageName0} (튜토리얼/수집 요구 비활성)");
+                GameManager.Stage.ClearedStage(stageName0);
+                return;
+            }
+
+            var mgr = AchievementManager.Instance;
+            if (mgr == null)
+            {
+                Debug.LogError("AchievementManager가 없습니다.");
+                _isCollided = false;
+                ShowToast("시스템 오류: 업적 매니저 없음");
+                return;
+            }
+
+            bool canClear = (mgr.totalItems > 0) && (mgr.collectedItems >= mgr.totalItems);
+            if (!canClear)
+            {
+                Debug.Log($"클리어 조건 미달: {mgr.collectedItems}/{mgr.totalItems}");
+                _isCollided = false; // 재충돌 허용
+                ShowToast("You Need To Collect Every Star!!");
+                return;
+            }
+
             var currentStageName = UnitySceneManager.GetActiveScene().name;
-            Debug.Log($"골인 지점 도달 {currentStageName}");
+            Debug.Log($"골인 지점 도달 {currentStageName} (모두 수집)");
             GameManager.Stage.ClearedStage(currentStageName);
         }
+    }
+
+    #endregion
+
+    #region 토스트
+
+    private void ShowToast(string message)
+    {
+        if (toastPanel == null || toastText == null)
+        {
+            Debug.LogWarning("Toast UI가 연결되지 않았습니다.");
+            return;
+        }
+
+        StopAllCoroutines(); // 여러 번 겹치지 않게
+        StartCoroutine(ToastRoutine(message));
+    }
+
+    private IEnumerator ToastRoutine(string message)
+    {
+        toastText.text = message;
+        toastPanel.SetActive(true);
+
+        yield return new WaitForSeconds(toastDuration);
+
+        toastPanel.SetActive(false);
     }
 
     #endregion

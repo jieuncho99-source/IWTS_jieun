@@ -1152,6 +1152,17 @@ Transform:
   - {fileID: 1028101483}
   m_Father: {fileID: 1552262730}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &36752618 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7333826305663506435, guid: 0105b461ae61ce04188505bf9243fc6c, type: 3}
+  m_PrefabInstance: {fileID: 1020923498}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &45989056
 GameObject:
   m_ObjectHideFlags: 0
@@ -6429,6 +6440,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 232711136}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &234779933 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4413695853228114152, guid: 0105b461ae61ce04188505bf9243fc6c, type: 3}
+  m_PrefabInstance: {fileID: 1020923498}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &235178131
 GameObject:
   m_ObjectHideFlags: 0
@@ -8467,13 +8483,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stageId: 03_Step1Scene
-  itemId: 2-3
+  itemId: 2
   visualRoot: {fileID: 297775613}
   playerTag: Player
   onCollected:
     m_PersistentCalls:
       m_Calls: []
-  uiIndex: 2
+  uiIndex: 1
 --- !u!1 &297955432
 GameObject:
   m_ObjectHideFlags: 0
@@ -30264,12 +30280,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
-    - target: {fileID: 4124903475893436325, guid: 0105b461ae61ce04188505bf9243fc6c, type: 3}
-      propertyPath: m_text
-      value: 'Stage 1
-
-        "Windows"'
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -33998,18 +34008,6 @@ PrefabInstance:
       value: CubieB
       objectReference: {fileID: 0}
     - target: {fileID: 2975472468116455285, guid: dab9e0711949e0f4d9583ea3b89e4fc9, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.37335
-      objectReference: {fileID: 0}
-    - target: {fileID: 2975472468116455285, guid: dab9e0711949e0f4d9583ea3b89e4fc9, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.37335
-      objectReference: {fileID: 0}
-    - target: {fileID: 2975472468116455285, guid: dab9e0711949e0f4d9583ea3b89e4fc9, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.37335
-      objectReference: {fileID: 0}
-    - target: {fileID: 2975472468116455285, guid: dab9e0711949e0f4d9583ea3b89e4fc9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.2488637
       objectReference: {fileID: 0}
@@ -34049,44 +34047,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3335909190476311575, guid: dab9e0711949e0f4d9583ea3b89e4fc9, type: 3}
+      propertyPath: stageId
+      value: 03_Step1Scene
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2450187846904538575, guid: dab9e0711949e0f4d9583ea3b89e4fc9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1158522093}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dab9e0711949e0f4d9583ea3b89e4fc9, type: 3}
 --- !u!4 &1158522091 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2975472468116455285, guid: dab9e0711949e0f4d9583ea3b89e4fc9, type: 3}
   m_PrefabInstance: {fileID: 1158522090}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1158522092 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2450187846904538575, guid: dab9e0711949e0f4d9583ea3b89e4fc9, type: 3}
-  m_PrefabInstance: {fileID: 1158522090}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1158522093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1158522092}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1dd5b9e7abdaecd4f80a6eaa2d30c707, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stageId: 03_Step1Scene
-  itemId: 2-1
-  visualRoot: {fileID: 1158522092}
-  playerTag: Player
-  onCollected:
-    m_PersistentCalls:
-      m_Calls: []
-  uiIndex: 0
 --- !u!1 &1158829806
 GameObject:
   m_ObjectHideFlags: 0
@@ -52112,10 +52086,14 @@ PrefabInstance:
       propertyPath: onDamaged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 250887662}
-    - target: {fileID: 599917961354751538, guid: 08a1a0f58f55ba9498226a13df37ebe6, type: 3}
-      propertyPath: onDamaged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Play
-      objectReference: {fileID: 0}
+    - target: {fileID: 1383412156914200300, guid: 08a1a0f58f55ba9498226a13df37ebe6, type: 3}
+      propertyPath: toastText
+      value: 
+      objectReference: {fileID: 36752618}
+    - target: {fileID: 1383412156914200300, guid: 08a1a0f58f55ba9498226a13df37ebe6, type: 3}
+      propertyPath: toastPanel
+      value: 
+      objectReference: {fileID: 234779933}
     - target: {fileID: 6697511773676122804, guid: 08a1a0f58f55ba9498226a13df37ebe6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.13
@@ -52159,10 +52137,6 @@ PrefabInstance:
     - target: {fileID: 6899466163539348560, guid: 08a1a0f58f55ba9498226a13df37ebe6, type: 3}
       propertyPath: m_Name
       value: FinalPlayer 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6899466163539348560, guid: 08a1a0f58f55ba9498226a13df37ebe6, type: 3}
-      propertyPath: m_TagString
-      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -60737,13 +60711,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stageId: 03_Step1Scene
-  itemId: 2-2
+  itemId: 3
   visualRoot: {fileID: 2035889710}
   playerTag: Player
   onCollected:
     m_PersistentCalls:
       m_Calls: []
-  uiIndex: 1
+  uiIndex: 2
 --- !u!1 &2037006130
 GameObject:
   m_ObjectHideFlags: 0

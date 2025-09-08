@@ -10,27 +10,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 7148248965433f946aecfed295757f20, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.37335286
+      value: 0.37335
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7148248965433f946aecfed295757f20, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.37335286
+      value: 0.37335
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7148248965433f946aecfed295757f20, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.37335286
+      value: 0.37335
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7148248965433f946aecfed295757f20, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.55
+      value: -0.2488637
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7148248965433f946aecfed295757f20, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.92
+      value: -7.7755537
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7148248965433f946aecfed295757f20, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 34.05
+      value: 46.65867
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7148248965433f946aecfed295757f20, type: 3}
       propertyPath: m_LocalRotation.w
@@ -75,6 +75,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7148248965433f946aecfed295757f20, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6740867287614958664}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7148248965433f946aecfed295757f20, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3335909190476311575}
   m_SourcePrefab: {fileID: 100100000, guid: 7148248965433f946aecfed295757f20, type: 3}
 --- !u!1 &2450187846904538575 stripped
 GameObject:
@@ -102,3 +105,23 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.33394, y: 2.3339398, z: 1.0608822}
   m_Center: {x: -0.0000005364418, y: 0, z: 0}
+--- !u!114 &3335909190476311575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450187846904538575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dd5b9e7abdaecd4f80a6eaa2d30c707, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stageId: 03_Step1Scene
+  itemId: 1
+  visualRoot: {fileID: 2450187846904538575}
+  playerTag: Player
+  onCollected:
+    m_PersistentCalls:
+      m_Calls: []
+  uiIndex: 0

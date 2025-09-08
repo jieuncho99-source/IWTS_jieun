@@ -89,16 +89,6 @@ public class StageManager : IManager
             await GameManager.Accomplishment.UnLock((int)AchievementKey.STRONGER);
         }
 
-        // 엔딩 연출 실행
-        var ending = GameObject.FindObjectOfType<EndingEffect>();
-        if (ending != null)
-        {
-            ending.PlayEnding();
-
-            // 연출 끝날 때까지 대기
-            await UniTask.Delay(4000);
-        }
-
         //마지막에 딱 한 번만 씬 전환
         if (UnitySceneManager.GetActiveScene().name != Scenes.START)
         {

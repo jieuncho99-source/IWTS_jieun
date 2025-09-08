@@ -21,8 +21,6 @@ public class HealthSystem : MonoBehaviour
 
     public void ApplyDamage(float amount)
     {
-        var ending = GameObject.FindObjectOfType<EndingEffect>();
-        if (ending != null && ending.isPlaying) return;
 
         currentHealth -= amount;
         Debug.Log($"체력: {currentHealth}");
@@ -32,7 +30,7 @@ public class HealthSystem : MonoBehaviour
 
         if (currentHealth <= 0f)
         {
-            // Die();
+            Die();
         }
     }
 
@@ -52,9 +50,6 @@ public class HealthSystem : MonoBehaviour
     public void ChangePlayerColor(Renderer playerRenderer)
     {
         if (playerRenderer == null) return;
-
-        var ending = GameObject.FindObjectOfType<EndingEffect>();
-        if (ending != null && ending.isPlaying) return;
 
 
         // 체력이 0 아래로도 갈 수 있으므로 Clamp

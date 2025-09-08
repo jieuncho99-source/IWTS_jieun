@@ -5924,7 +5924,7 @@ MonoBehaviour:
   _rotationSpeed: 720
   _dashSpeed: 16
   _dashDuration: 0.15
-  _dashCooldown: 0.15
+  _dashCooldown: 0.5
   dashSpeedLines: {fileID: 7198713343449736668}
 --- !u!114 &7198713343449736668
 MonoBehaviour:

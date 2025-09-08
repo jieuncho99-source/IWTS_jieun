@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 
 public class AchievementManager : MonoBehaviour
 {
@@ -24,8 +23,8 @@ public class AchievementManager : MonoBehaviour
     private readonly HashSet<string> _knownItemIds = new HashSet<string>();
 
     public string StageId => string.IsNullOrEmpty(stageId)
-    ? UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
-    : stageId;
+        ? UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+        : stageId;
 
     void Awake()
     {
@@ -44,7 +43,6 @@ public class AchievementManager : MonoBehaviour
 
     private void InitializeStageSnapshot()
     {
-        // 씬 내 모든 CollectibleItem 스캔
         var all = FindObjectsOfType<CollectibleItem>(true);
         totalItems = 0;
         collectedItems = 0;
@@ -52,13 +50,12 @@ public class AchievementManager : MonoBehaviour
 
         foreach (var it in all)
         {
-            if (it.stageId != StageId) continue; // 다른 스테이지 ID는 무시
+            if (it.stageId != StageId) continue;
             if (string.IsNullOrEmpty(it.itemId)) continue;
 
             totalItems++;
             _knownItemIds.Add(it.itemId);
 
-            // Awake에서 이미 본인 시각 상태는 반영됨
             if (AchievementStorage.IsItemCollected(StageId, it.itemId))
                 collectedItems++;
         }
@@ -70,16 +67,11 @@ public class AchievementManager : MonoBehaviour
 
     public void ReportCollected(CollectibleItem item)
     {
-        // 중복 보고 방지
         if (!_knownItemIds.Contains(item.itemId)) return;
-
-        // 이미 카운트에 포함됐는지 다시 검사
-        if (!AchievementStorage.IsItemCollected(StageId, item.itemId))
-            return;
+        if (!AchievementStorage.IsItemCollected(StageId, item.itemId)) return;
 
         collectedItems = Mathf.Clamp(collectedItems + 1, 0, totalItems);
         onProgressChanged?.Invoke(collectedItems, totalItems);
-
         MaybeCheckAllStar();
     }
 
@@ -94,7 +86,7 @@ public class AchievementManager : MonoBehaviour
         onAllStarAchieved?.Invoke();
     }
 
-    // 테스트/디버그: 현재 스테이지 진행도 초기화
+    // 테스트/디버그: 현재 스테이지 진행도 초기화 (이번 "세션" 기준)
     [ContextMenu("Reset Progress For Current Stage")]
     public void ResetProgressForCurrentStage()
     {
@@ -102,10 +94,9 @@ public class AchievementManager : MonoBehaviour
         foreach (var it in all)
         {
             if (it.stageId != StageId) continue;
-            PlayerPrefs.DeleteKey($"ACH_ITEM_{StageId}_{it.itemId}");
+            AchievementStorage.ClearItemCollected(StageId, it.itemId);
         }
-        PlayerPrefs.DeleteKey($"ACH_ALLSTAR_{StageId}");
-        PlayerPrefs.Save();
+        AchievementStorage.ClearAllStar(StageId);
 
         InitializeStageSnapshot();
 
