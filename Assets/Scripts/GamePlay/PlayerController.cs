@@ -27,6 +27,10 @@ public class PlayerController : MonoBehaviour
     [Tooltip("대시 후 다시 사용할 때까지의 쿨다운(초).")]
     [SerializeField] private float _dashCooldown = 0.30f;
 
+    [Header("DASH FX (선택)")]
+    [Tooltip("대시 시작 순간 한 번만 재생할 속도선 파티클")]
+    [SerializeField] public DashSpeedLines dashSpeedLines;      // 자식의 ParticleSystem 연결
+
     #endregion
 
     #region 내부 상태 변수
@@ -35,10 +39,13 @@ public class PlayerController : MonoBehaviour
     private Vector2 _moveInput;
 
     // Dash
-    private bool _dashRequested = false;      // 입력 콜백/폴백에서 true로 셋
-    private bool _isDashing = false;          // 현재 대시 중?
-    private float _dashTimer = 0f;            // 남은 대시 시간
-    private float _dashCooldownLeft = 0f;     // 남은 쿨다운
+    private bool _dashRequested = false;
+    private bool _isDashing = false;
+    private float _dashTimer = 0f;
+    private float _dashCooldownLeft = 0f;
+
+    // FX 상태 트래킹
+    private bool _wasDashing = false;   // 직전 프레임 대시 여부
 
     // 기타
     private bool _isCollided = false;
@@ -71,13 +78,15 @@ public class PlayerController : MonoBehaviour
             if (_dashTimer <= 0f)
                 _isDashing = false;
         }
+
+        _wasDashing = _isDashing;
     }
 
     private void FixedUpdate()
     {
         // 1) 대시 진입/유지
         if (TryApplyOrMaintainDash())
-            return;                 // 대시 프레임에는 이동을 스킵(속도 덮어쓰기 방지)
+            return; // 대시 프레임에는 일반 이동 스킵
 
         // 2) 일반 이동
         HandleMovement();
@@ -87,13 +96,11 @@ public class PlayerController : MonoBehaviour
 
     #region 입력 처리 (PlayerInput에서 호출)
 
-    // Move 액션 콜백
     public void OnMove(InputAction.CallbackContext context)
     {
         _moveInput = context.ReadValue<Vector2>();
     }
 
-    // Dash 액션 콜백 (있으면 사용, 없으면 스페이스 폴백으로 동작)
     public void OnDash(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
@@ -110,7 +117,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private bool TryApplyOrMaintainDash()
     {
-        // 대시 시작 조건: 요청 + 쿨다운 종료 + 현재 비대시 상태
+        // 대시 시작
         if (!_isDashing && _dashRequested && _dashCooldownLeft <= 0f)
         {
             _dashRequested = false;
@@ -123,13 +130,16 @@ public class PlayerController : MonoBehaviour
             if (dir.sqrMagnitude < 1e-4f) dir = Vector3.forward;
             dir.Normalize();
 
-            Vector3 v = _rb.velocity; // 표준 Rigidbody 속도 사용
+            Vector3 v = _rb.velocity;
             _rb.velocity = new Vector3(dir.x * _dashSpeed, v.y, dir.z * _dashSpeed);
 
-            return true; // 이 프레임은 이동 스킵
+            // ▶ 대시 시작 시점: FX 재생
+            if (dashSpeedLines != null) dashSpeedLines.OnDashStart();          // 속도선 파티클 1회 재생
+
+            return true;
         }
 
-        // 대시 유지: 대시 중에는 같은 방향/속도를 강제 유지(손맛 일정)
+        // 대시 유지
         if (_isDashing)
         {
             Vector3 dir = transform.forward; dir.y = 0f;
@@ -138,11 +148,11 @@ public class PlayerController : MonoBehaviour
 
             Vector3 v = _rb.velocity;
             _rb.velocity = new Vector3(dir.x * _dashSpeed, v.y, dir.z * _dashSpeed);
-            return true; // 이동 스킵
+            return true;
         }
 
         // 대시 아님
-        _dashRequested = false; // 잔여 요청 정리
+        _dashRequested = false;
         return false;
     }
 
@@ -150,26 +160,20 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 moveDirection = new Vector3(_moveInput.x, 0f, _moveInput.y);
 
-        // 1) 목표 평면 속도
         Vector3 targetVelocity = moveDirection * _moveSpeed;
 
-        // 2) 가감속 선택
         float accel = moveDirection.sqrMagnitude > 0.01f ? _acceleration : _deceleration;
 
-        // 3) 현재 평면 속도
         Vector3 currentPlanarVelocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
 
-        // 4) 보간된 새 평면 속도
         Vector3 newPlanarVelocity = Vector3.MoveTowards(
             currentPlanarVelocity,
             targetVelocity,
             accel * Time.fixedDeltaTime
         );
 
-        // 5) 실제 속도에 반영 (Y 보존)
         _rb.velocity = new Vector3(newPlanarVelocity.x, _rb.velocity.y, newPlanarVelocity.z);
 
-        // 6) 입력이 있을 때만 바라보는 방향 회전
         if (moveDirection.sqrMagnitude > 0.01f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
