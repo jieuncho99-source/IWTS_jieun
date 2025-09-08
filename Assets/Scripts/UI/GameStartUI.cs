@@ -13,10 +13,7 @@ public class GameStartUI : MonoBehaviour
 
     private void Awake()
     {
-        achievementBtn.onClick.AddListener(() =>
-        {
-            achievementPanel.SetActive(true);
-        });
+
     }
 
     private void Update()
@@ -29,14 +26,9 @@ public class GameStartUI : MonoBehaviour
 
         if (spacePressed || gamepadAPressed)
         {
-            if (achievementPanel.activeSelf)
-            {
-                achievementPanel.SetActive(false);
-            }
-            else
-            {
-                GameManager.Scene.LoadScene(Scenes.TUTORIAL);
-            }
+ 
+            GameManager.Scene.LoadScene(Scenes.TUTORIAL);
+            
         }
 
         // ±ôºýÀÌ´Â È¿°ú
