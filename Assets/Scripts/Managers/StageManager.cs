@@ -16,7 +16,6 @@ public class StageManager : IManager
             Scenes.TUTORIAL,
             Scenes.STEP1,
             Scenes.STEP2,
-            Scenes.STEP3,
             Scenes.FINAL,
         };
     }

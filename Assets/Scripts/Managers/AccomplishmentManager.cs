@@ -32,8 +32,8 @@ public class AccomplishmentManager : IManager
         LoadDefinitionsFromResources();
         LoadOrInitStates();
 
-        _UI = GameObject.Find("UI_Accom");
-        Object.DontDestroyOnLoad(_UI);
+        // _UI = GameObject.Find("UI_Accom");
+       // Object.DontDestroyOnLoad(_UI);
     }
 
     private void LoadDefinitionsFromResources()
