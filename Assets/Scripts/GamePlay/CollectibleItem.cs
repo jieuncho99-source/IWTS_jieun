@@ -24,6 +24,10 @@ public class CollectibleItem : MonoBehaviour
     [Header("Events")]
     public UnityEvent onCollected; // 파티클, 사운드 등 연결
 
+    [Header("UI")]
+    [Tooltip("아이콘 슬롯 인덱스 (0부터 시작). UI의 아이콘 배열과 매칭")]
+    public int uiIndex = -1;
+
     [NonSerialized] public bool isCollected; // 런타임 상태
 
     void Reset()
