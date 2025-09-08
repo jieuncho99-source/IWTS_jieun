@@ -649,6 +649,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 599917961354751538, guid: 08a1a0f58f55ba9498226a13df37ebe6, type: 3}
+      propertyPath: onDamaged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1380048997}
+    - target: {fileID: 599917961354751538, guid: 08a1a0f58f55ba9498226a13df37ebe6, type: 3}
+      propertyPath: onDamaged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Play
+      objectReference: {fileID: 0}
     - target: {fileID: 6697511773676122804, guid: 08a1a0f58f55ba9498226a13df37ebe6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.13
@@ -24575,6 +24583,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8244879860049067952, guid: 122c6d45107604d4a8b5d94b7aee2dfd, type: 3}
   m_PrefabInstance: {fileID: 1380048995}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1380048997 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 947546883238608639, guid: 122c6d45107604d4a8b5d94b7aee2dfd, type: 3}
+  m_PrefabInstance: {fileID: 1380048995}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e6bdac0399ef874596de725b3d17e8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1381089671
 GameObject:
   m_ObjectHideFlags: 0
