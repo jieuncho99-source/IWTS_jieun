@@ -11,31 +11,31 @@ public class FlyingObjectSpawner : MonoBehaviour
     [Min(0.05f)] public float spawnInterval = 1.0f;
     [Range(0f, 0.9f)] public float intervalJitter = 0.15f;
 
-    [Header("Spawn Plane (¿ùµå ÁÂÇ¥°è)")]
-    [Tooltip("ÇÃ·¹ÀÌ¾î ¾ÕÀ¸·Î ¾ó¸¶³ª ¶³¾îÁø Z¿¡¼­ ½ºÆùÇÒÁö (player.z + ÀÌ °ª)")]
+    [Header("Spawn Plane (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½)")]
+    [Tooltip("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ó¸¶³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Zï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (player.z + ï¿½ï¿½ ï¿½ï¿½)")]
     public float forwardDistanceZ = 12f;
 
-    [Tooltip("½ºÆù X ÁÂÇ¥ÀÇ ¿ùµå ¹üÀ§")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ X ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public Vector2 worldXRange = new Vector2(-6f, 6f);
 
-    [Tooltip("½ºÆùµÇ´Â ¿ùµå Y ÁÂÇ¥(°íÁ¤°ª)")]
-    public float spawnY = 1.0f;   // ¡Ú ÀÎ½ºÆåÅÍ¿¡¼­ ¿©±â¸¸ ¹Ù²Ù¸é Y°¡ °íÁ¤µÊ
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ Y ï¿½ï¿½Ç¥(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)")]
+    public float spawnY = 1.0f;   // ï¿½ï¿½ ï¿½Î½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¸¸ ï¿½Ù²Ù¸ï¿½ Yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     [Header("Motion")]
-    [Tooltip("¿ùµå ZÃàÀ¸·Î¸¸ ÀÌµ¿(ÇÃ·¹ÀÌ¾î ÂÊ). ÇØÁ¦ ½Ã -player.forward·Î ÀÌµ¿")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ Zï¿½ï¿½ï¿½ï¿½ï¿½Î¸ï¿½ ï¿½Ìµï¿½(ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½). ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ -player.forwardï¿½ï¿½ ï¿½Ìµï¿½")]
     public bool worldZOnly = true;
 
-    [Tooltip("¼Óµµ ¹üÀ§(ÃÊ´ç m)")]
+    [Tooltip("ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ê´ï¿½ m)")]
     public Vector2 speedRange = new Vector2(8f, 14f);
 
-    [Tooltip("ZÃà Àü¿ë ÀÌµ¿ÀÏ ¶§ X/Y¸¦ °íÁ¤ÇØ ÁøÂ¥ Z¸¸ ¿òÁ÷ÀÌ°Ô ÇÔ")]
+    [Tooltip("Zï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ X/Yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Â¥ Zï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ï¿½")]
     public bool freezeXYWhenWorldZ = true;
 
-    [Tooltip("ÀÌµ¿ ¹æÇâÀ» ¹Ù¶óº¸°Ô È¸Àü")]
+    [Tooltip("ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸°ï¿½ È¸ï¿½ï¿½")]
     public bool alignToMotion = false;
 
     [Header("Lifetime")]
-    [Min(0f)] public float maxLifeTime = 8f; // 0ÀÌ¸é Á¦ÇÑ ¾øÀ½
+    [Min(0f)] public float maxLifeTime = 8f; // 0ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     [Header("Misc")]
     public bool autoFindPlayerByTag = true;
@@ -52,7 +52,7 @@ public class FlyingObjectSpawner : MonoBehaviour
 
         if (player == null || projectilePrefabs == null || projectilePrefabs.Length == 0)
         {
-            Debug.LogWarning("[FlyingObjectSpawner] player ¶Ç´Â projectilePrefabs ¼³Á¤ÀÌ ÇÊ¿äÇÕ´Ï´Ù.");
+            Debug.LogWarning("[FlyingObjectSpawner] player ï¿½Ç´ï¿½ projectilePrefabs ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Õ´Ï´ï¿½.");
             enabled = false; return;
         }
 
@@ -76,42 +76,42 @@ public class FlyingObjectSpawner : MonoBehaviour
 
     private void SpawnOne()
     {
-        // 1) ½ºÆù À§Ä¡ (X ·£´ý, Y °íÁ¤, Z´Â ÇÃ·¹ÀÌ¾î ¾ÕÂÊ)
+        // 1) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ (X ï¿½ï¿½ï¿½ï¿½, Y ï¿½ï¿½ï¿½ï¿½, Zï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½)
         float x = Random.Range(worldXRange.x, worldXRange.y);
-        float y = spawnY; // ¡Ú °íÁ¤ Y
+        float y = spawnY; // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Y
         float z = player.position.z + forwardDistanceZ;
         Vector3 spawnPos = new Vector3(x, y, z);
 
-        // 2) ÇÁ¸®ÆÕ »ý¼º
+        // 2) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         var prefab = projectilePrefabs[Random.Range(0, projectilePrefabs.Length)];
         var go = Instantiate(prefab, spawnPos, Quaternion.identity);
 
-        // 3) ÀÌµ¿ ¹æÇâ & ¼Óµµ
+        // 3) ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ & ï¿½Óµï¿½
         Vector3 dir;
         if (worldZOnly)
         {
-            // ½ºÆùÀÌ ÇÃ·¹ÀÌ¾î ¾ÕÂÊÀÌ¸é -Z·Î, µÚÂÊÀÌ¸é +Z·Î(Ç×»ó ÇÃ·¹ÀÌ¾î ÂÊ)
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ -Zï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ +Zï¿½ï¿½(ï¿½×»ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½)
             dir = (spawnPos.z >= player.position.z) ? Vector3.back : Vector3.forward;
         }
         else
         {
-            // ÇÃ·¹ÀÌ¾îÀÇ Àü¹æ ±âÁØ(°ÔÀÓÀÌ È¸ÀüÇÏ´Â °æ¿ì À¯¿ë). Y ¼ººÐ Á¦°Å·Î Æò¸é ÀÌµ¿.
+            // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½). Y ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å·ï¿½ ï¿½ï¿½ï¿½ ï¿½Ìµï¿½.
             dir = -player.forward; dir.y = 0f; dir.Normalize();
         }
 
         float speed = Random.Range(speedRange.x, speedRange.y);
 
-        // 4) Rigidbody ¼³Á¤ (Á÷¼± ÀÌµ¿)
+        // 4) Rigidbody ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½)
         if (!go.TryGetComponent<Rigidbody>(out var rb))
             rb = go.AddComponent<Rigidbody>();
 
         rb.useGravity = false;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-        rb.velocity = dir * speed;
+        rb.linearVelocity = dir * speed;
 
         if (worldZOnly && freezeXYWhenWorldZ)
         {
-            // X/Y °íÁ¤ ¡æ Z·Î¸¸ ÀÌµ¿
+            // X/Y ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Zï¿½Î¸ï¿½ ï¿½Ìµï¿½
             rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY
                            | RigidbodyConstraints.FreezeRotation;
         }
@@ -122,7 +122,7 @@ public class FlyingObjectSpawner : MonoBehaviour
 
         if (alignToMotion) go.transform.rotation = Quaternion.LookRotation(dir);
 
-        // 5) ¼ö¸í °ü¸®
+        // 5) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (maxLifeTime > 0f) Destroy(go, maxLifeTime);
     }
 
@@ -133,7 +133,7 @@ public class FlyingObjectSpawner : MonoBehaviour
 
         float z = player.position.z + forwardDistanceZ;
 
-        // ½ºÆù¼±(X ¹üÀ§ @ °íÁ¤ Y, Z°íÁ¤)
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(X ï¿½ï¿½ï¿½ï¿½ @ ï¿½ï¿½ï¿½ï¿½ Y, Zï¿½ï¿½ï¿½ï¿½)
         Vector3 a = new Vector3(worldXRange.x, spawnY, z);
         Vector3 b = new Vector3(worldXRange.y, spawnY, z);
 
@@ -142,7 +142,7 @@ public class FlyingObjectSpawner : MonoBehaviour
         Gizmos.DrawSphere(a, 0.06f);
         Gizmos.DrawSphere(b, 0.06f);
 
-        // ÀÌµ¿ ¹æÇâ È­»ìÇ¥(ÇÃ·¹ÀÌ¾î ÂÊ)
+        // ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ È­ï¿½ï¿½Ç¥(ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½)
         Gizmos.color = Color.red;
         Vector3 mid = (a + b) * 0.5f;
         Vector3 tip = mid + ((z >= player.position.z) ? Vector3.back : Vector3.forward) * 2f;

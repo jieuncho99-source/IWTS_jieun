@@ -143,8 +143,8 @@ public class PlayerController : MonoBehaviour
             if (dir.sqrMagnitude < 1e-4f) dir = Vector3.forward;
             dir.Normalize();
 
-            Vector3 v = _rb.velocity;
-            _rb.velocity = new Vector3(dir.x * _dashSpeed, v.y, dir.z * _dashSpeed);
+            Vector3 v = _rb.linearVelocity;
+            _rb.linearVelocity = new Vector3(dir.x * _dashSpeed, v.y, dir.z * _dashSpeed);
 
             // 대시 시작 FX
             if (dashSpeedLines != null) dashSpeedLines.OnDashStart();
@@ -159,8 +159,8 @@ public class PlayerController : MonoBehaviour
             if (dir.sqrMagnitude < 1e-4f) dir = Vector3.forward;
             dir.Normalize();
 
-            Vector3 v = _rb.velocity;
-            _rb.velocity = new Vector3(dir.x * _dashSpeed, v.y, dir.z * _dashSpeed);
+            Vector3 v = _rb.linearVelocity;
+            _rb.linearVelocity = new Vector3(dir.x * _dashSpeed, v.y, dir.z * _dashSpeed);
             return true;
         }
 
@@ -177,7 +177,7 @@ public class PlayerController : MonoBehaviour
 
         float accel = moveDirection.sqrMagnitude > 0.01f ? _acceleration : _deceleration;
 
-        Vector3 currentPlanarVelocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
+        Vector3 currentPlanarVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
 
         Vector3 newPlanarVelocity = Vector3.MoveTowards(
             currentPlanarVelocity,
@@ -185,7 +185,7 @@ public class PlayerController : MonoBehaviour
             accel * Time.fixedDeltaTime
         );
 
-        _rb.velocity = new Vector3(newPlanarVelocity.x, _rb.velocity.y, newPlanarVelocity.z);
+        _rb.linearVelocity = new Vector3(newPlanarVelocity.x, _rb.linearVelocity.y, newPlanarVelocity.z);
 
         if (moveDirection.sqrMagnitude > 0.01f)
         {
